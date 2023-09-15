@@ -1,16 +1,42 @@
 import requests
 from bs4 import BeautifulSoup
+import webbrowser
+from colorama import Fore, Back, Style, init
 
 print("Let's scrap the news")
+print('\n')
+print('Here are the 10 first articles of the FT')
 
+# FT
+while True:
+    print('\n')
+    ft = requests.get("http://www.ft.com")
+    ftsoup = BeautifulSoup(ft.content, "html.parser")
+    ftresults = ftsoup.find_all(class_="js-teaser-headline")
+    ft_links = []
+    ft_title = []
 
-URL = "https://www.lemonde.fr/"
-page = requests.get(URL)
+    # Append title and link to arrays
+    for div in ftresults[:10]:
+        anchor = div.find('a')
+        if anchor:
+            href = 'https://www.ft.com' + anchor.get('href')
+            text = anchor.get_text(strip=True)
+            if href:
+                ft_links.append(href)
+                ft_title.append(text)
 
-soup = BeautifulSoup(page.content, "html.parser")
+    for i, result in enumerate(ft_title):
+        print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
 
+    user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next page: \n {Style.RESET_ALL}")
 
-results = soup.find_all(class_="article__title")
+    if user_input == '':
+        break
+    user_input = int(user_input) - 1
+    if 0 < user_input < len(ft_links):
+        webbrowser.open(ft_links[user_input])
+    else:
+        print("Please select a valid article number")
 
-for i, result in enumerate(results[:5]):
-    print(f"Result {i + 1}: {result.get_text()}")
+print("Goodbye!")
