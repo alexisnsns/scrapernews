@@ -6,7 +6,7 @@ from colorama import Fore, Style
 print("Let's scrap the news")
 print('\n')
 
-newspapers = ['Financial Times', 'New Yorker', 'The Economist', 'New York Times']
+newspapers = ['Financial Times', 'New Yorker', 'The Economist', 'New York Times', 'Le Monde']
 exit_flag = False
 
 while True:
@@ -30,18 +30,15 @@ while True:
                             ft_links.append(href)
                             ft_title.append(text)
 
-
-
                 for i, result in enumerate(ft_title):
                     print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
 
+                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to get to the next newspaper, or press x to exit: \n {Style.RESET_ALL}")
 
-                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next newspaper: \n {Style.RESET_ALL}")
-
-                if user_input == '':
+                if user_input.lower() == 'x':
                     exit_flag = True
                     break
-                elif user_input.lower() == 'x':
+                elif user_input == '':
                     break
                 user_input = int(user_input) - 1
                 if 0 <= user_input < len(ft_links):
@@ -81,12 +78,12 @@ while True:
                     print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{title}{Style.RESET_ALL}")
                     print(f"{Fore.YELLOW} - {Style.RESET_ALL} {Fore.WHITE}{description}{Style.RESET_ALL}")
 
-                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next newspaper: \n {Style.RESET_ALL}")
+                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to get to the next newspaper, or press x to exit: \n {Style.RESET_ALL}")
 
-                if user_input == '':
+                if user_input.lower() == 'x':
                     exit_flag = True
                     break
-                elif user_input.lower() == 'x':
+                elif user_input == '':
                     break
                 user_input = int(user_input) - 1
                 if 0 <= user_input < len(ny_links):
@@ -113,12 +110,12 @@ while True:
                 for i, result in enumerate(te_titles):
                     print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
 
-                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next newspaper: \n {Style.RESET_ALL}")
+                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to get to the next newspaper, or press x to exit: \n {Style.RESET_ALL}")
 
-                if user_input == '':
+                if user_input.lower() == 'x':
                     exit_flag = True
                     break
-                elif user_input.lower() == 'x':
+                elif user_input == '':
                     break
                 user_input = int(user_input) - 1
                 if 0 <= user_input < len(te_links):
@@ -132,6 +129,7 @@ while True:
                 nytimes_results = nysoup.find_all(class_="css-9mylee")
                 nytimes_links = []
                 nytimes_titles = []
+                nytimes_descriptions = []
 
                 for div in nytimes_results[:10]:
                     if div:
@@ -145,19 +143,52 @@ while True:
                             if href:
                                 nytimes_links.append(href)
 
+
                 for i, result in enumerate(nytimes_titles):
                     print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
 
                 user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get back to the first newspaper: \n {Style.RESET_ALL}")
 
-                if user_input == '':
+                if user_input.lower() == 'x':
                     exit_flag = True
                     break
-                elif user_input.lower() == 'x':
+                elif user_input == '':
                     break
                 user_input = int(user_input) - 1
                 if 0 <= user_input < len(nytimes_links):
                     webbrowser.open(nytimes_links[user_input])
+                    continue
+
+            elif paper == 'Le Monde':
+                print(f'Read the {paper.upper()}')
+                lm = requests.get("https://www.lemonde.fr/")
+                lmsoup = BeautifulSoup(lm.content, "html.parser")
+                lmresults = lmsoup.find_all(class_="article")
+                lm_links = []
+                lm_titles = []
+
+
+                for div in lmresults[:10]:
+                    href = div.get('href')
+                    text = div.get_text(strip=True)
+                    if href:
+                        lm_links.append(href)
+                        lm_titles.append(text)
+
+
+                for i, result in enumerate(lm_titles):
+                    print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
+
+                user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get back to the first newspaper: \n {Style.RESET_ALL}")
+
+                if user_input.lower() == 'x':
+                    exit_flag = True
+                    break
+                elif user_input == '':
+                    break
+                user_input = int(user_input) - 1
+                if 0 <= user_input < len(lm_links):
+                    webbrowser.open(lm_links[user_input])
                     continue
 
         if exit_flag:
@@ -166,3 +197,8 @@ while True:
     if exit_flag:
         print("Goodbye!")
         break
+
+
+
+
+# in Le Monde fetching article only gets the header; find another class for the mainpage articles
