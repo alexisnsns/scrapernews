@@ -19,6 +19,7 @@ while True:
                 ftresults = ftsoup.find_all(class_="js-teaser-headline")
                 ft_links = []
                 ft_title = []
+                ft_description = []
 
                 for div in ftresults[:10]:
                     anchor = div.find('a')
@@ -29,8 +30,11 @@ while True:
                             ft_links.append(href)
                             ft_title.append(text)
 
+
+
                 for i, result in enumerate(ft_title):
                     print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
+
 
                 user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next newspaper: \n {Style.RESET_ALL}")
 
@@ -51,6 +55,7 @@ while True:
                 nyresults = nysoup.find_all(class_="summary-item__hed-link")
                 ny_links = []
                 ny_titles = []
+                ny_descriptions = []
 
                 for div in nyresults[:10]:
                     if div:
@@ -59,8 +64,22 @@ while True:
                         ny_links.append(href)
                         ny_titles.append(text)
 
-                for i, result in enumerate(ny_titles):
-                    print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
+                for link in ny_links:  # Looping through all links
+                    article_page = requests.get(link)  # Fetching the article
+                    article_soup = BeautifulSoup(article_page.content, 'html.parser')  # Parsing the article HTML
+                    description_divs = article_soup.find_all(class_=["ContentHeaderDek-bIqFFZ", "SplitScreenContentHeaderDek-emptdL"])
+
+                    if description_divs:
+                        for div in description_divs:
+                            description = div.get_text(strip=True)
+                            ny_descriptions.append(description)
+                    else:
+                        ny_descriptions.append('Description not found')
+
+
+                for i, (title, description) in enumerate(zip(ny_titles, ny_descriptions)):
+                    print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{title}{Style.RESET_ALL}")
+                    print(f"{Fore.YELLOW} - {Style.RESET_ALL} {Fore.WHITE}{description}{Style.RESET_ALL}")
 
                 user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to exit, press x to get to the next newspaper: \n {Style.RESET_ALL}")
 
