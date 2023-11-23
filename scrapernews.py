@@ -87,7 +87,7 @@ while True:
 
     elif paper == 'New Yorker':
         print(f'Read the {paper.upper()}')
-        tg = requests.get("https://www.newyorker.com/")
+        ny = requests.get("https://www.newyorker.com/")
         nysoup = BeautifulSoup(ny.content, "html.parser")
         nyresults = nysoup.find_all(class_="summary-item__hed-link")
         ny_links = []
