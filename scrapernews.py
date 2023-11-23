@@ -5,7 +5,7 @@ from colorama import Fore, Style
 
 print("Let's read the news")
 
-newspapers = ['Financial Times', 'New Yorker', 'Economist', 'New York Times', 'Le Monde']
+newspapers = ['Financial Times', 'New Yorker', 'Economist', 'New York Times', 'Le Monde', 'The Guardian']
 exit_flag = False
 
 should_print_titles = True
@@ -87,7 +87,7 @@ while True:
 
     elif paper == 'New Yorker':
         print(f'Read the {paper.upper()}')
-        ny = requests.get("https://www.newyorker.com/")
+        tg = requests.get("https://www.newyorker.com/")
         nysoup = BeautifulSoup(ny.content, "html.parser")
         nyresults = nysoup.find_all(class_="summary-item__hed-link")
         ny_links = []
@@ -356,9 +356,54 @@ while True:
                 print('Invalid command')
                 should_print_list = False
 
+    elif paper == 'The Guardian':
+            print(f'Read {paper.upper()}')
+            tg = requests.get("https://www.theguardian.com/international")
+            tgsoup = BeautifulSoup(tg.content, "html.parser")
+            tg_results = tgsoup.find_all(class_="dcr-lv2v9o")
+            tg_links = []
+            tg_titles = []
+            tg_descriptions = []
+
+            for div in tg_results[:10]:
+                if div:
+                        href = div.get('href')
+                        label = div.get('aria-label')
+                        if href:
+                            tg_links.append("https://www.theguardian.com" + href)
+                            tg_titles.append(label)
+
+            should_print_list = True
+
+            while True:
+                if should_print_list:
+                    for i, result in enumerate(tg_titles):
+                        print(f"{Fore.BLUE}{i + 1} - {Style.RESET_ALL} {Fore.MAGENTA}{result}{Style.RESET_ALL}")
+                    user_input = input(f"{Fore.GREEN}{Style.BRIGHT}Pick one article, press enter to choose another newspaper, or press x to exit: \n > {Style.RESET_ALL}")
+                else:
+                    user_input = input(f">")
+
+                if user_input.lower() == 'x':
+                    exit_flag = True
+                    break
+                elif user_input.lower() == '':
+                    break
+
+                try:
+                    user_input = int(user_input) - 1
+                    if 0 <= user_input < len(tg_links):
+                        webbrowser.open(tg_links[user_input])
+                        should_print_list = False
+                    else:
+                        print('Number not in list')
+                        should_print_list = False
+                except ValueError:
+                    print('Invalid command')
+                    should_print_list = False
+
     if exit_flag:
         print("Goodbye!")
         break
 
 
-# missing descriptions to FT, Economist, NYT
+# missing descriptions to FT, Economist, NYT, guardian
