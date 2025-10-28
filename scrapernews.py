@@ -6,7 +6,7 @@ from colorama import Fore, Style
 newspapers = {
     'Financial Times': 'financial_times',
     'New Yorker': 'new_yorker',
-    'Economist': 'economist',
+    'Atlantic': 'atlantic',
     'New York Times': 'new_york_times',
     'Le Monde': 'le_monde',
     'The Guardian': 'guardian',
@@ -54,7 +54,7 @@ while True:
             print(f"{Fore.BLUE}{i + 1}.{Style.RESET_ALL} {Fore.MAGENTA}{title}{Style.RESET_ALL}")
             print(f"{Fore.YELLOW}    {desc}{Style.RESET_ALL}\n")
 
-        choice = input(f"{Fore.GREEN}Pick an article number, Enter to go back, or x to exit:\n> {Style.RESET_ALL}")
+        choice = input(f"{Fore.GREEN}Pick an article number, Enter to go back the the newspaper list, or x to exit:\n> {Style.RESET_ALL}")
 
         if choice.lower() == 'x':
             exit()
